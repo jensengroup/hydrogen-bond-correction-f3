@@ -16,6 +16,17 @@ Use the make script. Change compiler if you use something else than `gfortran`.
 
     make
 
+
+## Parameters
+
+Default parameters are for the PM6-D3H+ model.
+
+    nitrogen = -0.15
+    oxygen   = -0.16
+
+change it either via source code, or use a parameter file.
+
+
 ## Usage
 
 ### Energy
@@ -31,11 +42,20 @@ to calculate the correction energy of the XYZ structure.
 
 If you want to calculate the gradient of a structure you can call
 
-    ./f3 -x <structure.xyz> --gradient
+    ./f3 -g -x <structure.xyz>
+
+
+## Examples
+
+Included is a parameter file and structure.xyz
+
+    ./f3 -p examples/parameter.dat -x examples/structure.xyz
 
 
 ## Implementation
 
 If you want to implement the module in a QM package, you can. It should be simple.
 Look in the `program.f90` to see how to properly use the module.
+
+
 
