@@ -7,10 +7,10 @@ for Semiempirical QM Methods and Force Fields.
 
 Fortran F90 (module) implementation of Martin Korths Hydrogen-bond correction term.
 
-$$
-    f(x) = x^2 + \Delta
-$$
 
+![equation](http://latex.codecogs.com/gif.latex?1%2Bsin%28mc%5E2%29%0D%0A)
+
+% Comment
 
 ## Known Limitation
 
