@@ -9,7 +9,6 @@ program thirdgeneration_hbond_correction
     ! Version
     character(len=*), parameter :: version = '1.0'
 
-
     ! Periodic table
     character(len=2) :: element(94)
     data element /'h ','he', &
@@ -23,7 +22,6 @@ program thirdgeneration_hbond_correction
     & 'ho','er','tm','yb','lu','hf','ta','w ','re','os','ir','pt', &
     & 'au','hg','tl','pb','bi','po','at','rn', &
     & 'fr','ra','ac','th','pa','u ','np','pu'/
-
 
     ! Options
     character(len=32) :: arg
@@ -39,6 +37,7 @@ program thirdgeneration_hbond_correction
 
     character(len=2) :: labels(maxnatoms)
     double precision :: geo(3,maxnatoms)
+    double precision :: gradient(3,maxnatoms)
     integer :: ilabels(maxnatoms)
 
     double precision :: c_oxygen, c_nitrogen
@@ -110,6 +109,7 @@ program thirdgeneration_hbond_correction
         end select
     enddo
 
+
     if(geofile=='')then
         call print_error('No structure file')
     endif
@@ -120,18 +120,12 @@ program thirdgeneration_hbond_correction
     !
     open(ix, file=geofile, iostat=ierr)
     if(ierr.ne.0)then
-        write(*,*)
-        write(*,*) "Unable to open input file"
-        write(*,*)
-        stop
+        call print_error('Unable to open input file')
     endif
 
     read(ix,*) natoms
     if(natoms.gt.maxnatoms) then
-        write(*,*)
-        write(*,*) 'Too many atoms'
-        write(*,*)
-        stop
+        call print_error('Too many atoms')
     endif
 
     read(ix,*) ! I'm not interested in the name
@@ -172,12 +166,9 @@ program thirdgeneration_hbond_correction
         c_oxygen   = -0.15d0
     endif
 
-
     ! Calculate energy
 
-
     ! Calculate gradient
-
 
     ! Print output
     print '(a)', ''

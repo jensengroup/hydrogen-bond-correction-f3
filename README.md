@@ -1,10 +1,19 @@
 # Third-Generation Hydrogen-Bonding Correction
 
+Third-Generation Hydrogen-Bonding Corrections
+for Semiempirical QM Methods and Force Fields.
 
-Third-Generation Hydrogen-Bonding Corrections for Semiempirical QM Methods and Force Fields.
-
+## Introduction
 
 Fortran F90 (module) implementation of Martin Korths Hydrogen-bond correction term.
+
+$$
+    f(x) = x^2 + \Delta
+$$
+
+
+## Known Limitation
+
 
 ## Please cite as:
 
@@ -15,7 +24,6 @@ Martin Korth, J. Chem. Theory Comput., 2010, 6 (12), pp 3808–3816, DOI: 10.102
 Use the make script. Change compiler if you use something else than `gfortran`.
 
     make
-
 
 ## Parameters
 
