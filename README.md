@@ -1,23 +1,22 @@
 # Third-Generation Hydrogen-Bonding Correction
 
-Third-Generation Hydrogen-Bonding Corrections
-for Semiempirical QM Methods and Force Fields.
+Third-Generation Hydrogen-Bonding Corrections for Semiempirical QM Methods and
+Force Fields.
 
 ## Introduction
 
-Fortran F90 (module) implementation of Martin Korths Hydrogen-bond correction term.
-
-
-![equation](http://latex.codecogs.com/gif.latex?1%2Bsin%28mc%5E2%29%0D%0A)
-
-% Comment
+Fortran F90 (module) implementation of Martin Korths Hydrogen-bond correction
+term.
 
 ## Known Limitation
 
+TODO Nitrogen term
 
 ## Please cite as:
 
-Martin Korth, J. Chem. Theory Comput., 2010, 6 (12), pp 3808–3816, DOI: 10.1021/ct100408b
+    Martin Korth,
+    J. Chem. Theory Comput., 2010, 6 (12), pp 3808–3816,
+    DOI: 10.1021/ct100408b
 
 ## Installation
 
