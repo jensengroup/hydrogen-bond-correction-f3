@@ -4,10 +4,18 @@ program thirdgeneration_hbond_correction
     ! https://github.com/jensengroup/hydrogen-bond-correction-f3
     ! """
 
+    ! Use H+ HB correction
+    use hp_hbcorr, only: hbond_energy, hbond_gradient
+
     implicit none
 
     ! Version
     character(len=*), parameter :: version = '1.0'
+
+    ! Constants
+    double precision, parameter :: bohr2angstroem = 0.52917726d0
+    double precision, parameter :: hartree2kcal = 627.509541d0
+    double precision, parameter :: hartree2kj = 2625.5d0
 
     ! Periodic table
     character(len=2) :: element(94)
@@ -38,6 +46,8 @@ program thirdgeneration_hbond_correction
     character(len=2) :: labels(maxnatoms)
     double precision :: geo(3,maxnatoms)
     double precision :: gradient(3,maxnatoms)
+    double precision :: energy, gnorm, gmax
+    double precision :: test(maxnatoms)
     integer :: ilabels(maxnatoms)
 
     double precision :: c_oxygen, c_nitrogen
@@ -146,6 +156,11 @@ program thirdgeneration_hbond_correction
             endif
         enddo
 
+        ! Convert coordinates to A.U.
+        do j = 1, 3
+            geo(j,i) = geo(j,i)/bohr2angstroem
+        enddo
+
     enddo
 
     ! Open Parameters
@@ -167,22 +182,50 @@ program thirdgeneration_hbond_correction
     endif
 
     ! Calculate energy
+    call hbond_energy(natoms, geo, ilabels, energy)
 
     ! Calculate gradient
+    if(lgradient) then
+        call hbond_gradient(natoms, geo, ilabels, energy, gradient)
+    endif
 
     ! Print output
-    print '(a)', ''
     print '(a)', ''
     print '(a)', '*************************************'
     print '(a)', '      Hydrogen-Bond Correction'
     print '(a)', '*************************************'
+    call print_cite()
     print '(a)', ''
     print '(a)', 'Energy:'
-    print '(a)', '      -456.32    kcal/mol'
-    print '(a)', '      -256.32    joule'
-    print '(a)', '      -156.32    hatree'
     print '(a)', ''
-    call print_cite()
+    print '(f15.6,a)', energy, ' Hartree'
+    print '(f15.6,a)', energy*hartree2kcal, ' kcal/mol'
+    print '(f15.6,a)', energy*hartree2kj,   ' kJ/mol'
+
+    if(lgradient) then
+        print '(a)', ''
+        print '(a)', 'Gradient:'
+        print '(a)', ''
+        print '(a)', '    N  A        dx          dy          dz'
+
+        do i = 1, natoms
+            print '(I5,2A,3F12.6)', i, '  ', labels(i), gradient(1,i), gradient(2,i), gradient(3,i)
+        enddo
+
+        gnorm = sqrt(sum(gradient**2)/size(gradient))
+
+        if(maxval(gradient) > abs(minval(gradient))) then
+            gmax = maxval(gradient)
+        else
+            gmax = minval(gradient)
+        endif
+
+        print '(a)', ''
+        print '(a,F10.6,a)','Gradient norm (RMS):', gnorm, ' Hartree/Bohr'
+        print '(a,F10.6,a)','Gradient Max:       ', gmax, ' Hartree/Bohr'
+    endif
+
+    print '(a)', ''
 
 contains
 
@@ -198,9 +241,9 @@ contains
     subroutine print_cite()
         print '(a)', ''
         print '(a)', 'Cite as:'
-        print '(a)', 'Martin Korth'
-        print '(a)', 'J. Chem. Theory Comput., 2010, 6 (12), pp 3808–3816'
-        print '(a)', 'DOI: 10.1021/ct100408b'
+        print '(a)', '  Martin Korth'
+        print '(a)', '  J. Chem. Theory Comput., 2010, 6 (12), pp 3808–3816'
+        print '(a)', '  DOI: 10.1021/ct100408b'
         print '(a)', ''
     end subroutine print_cite
 
@@ -212,11 +255,11 @@ contains
         print '(a)', ''
         print '(a)', 'options:'
         print '(a)', ''
-        print '(a)', '  -v, --version     print version information and exit'
-        print '(a)', '  -h, --help        print usage information and exit'
+        print '(a)', '  -v,        --version        print version information and exit'
+        print '(a)', '  -h,        --help           print usage information and exit'
         print '(a)', '  -p <file>, --param <file>   use parameter file <par.dat>'
-        print '(a)', '  -d, --debug       print debug information'
-        print '(a)', '  -g, --gradient    calculate and print gradient'
+        print '(a)', '  -d,        --debug          print debug information'
+        print '(a)', '  -g,        --gradient       calculate and print gradient'
         print '(a)', ''
     end subroutine print_help
 
