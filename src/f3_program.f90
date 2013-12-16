@@ -191,12 +191,12 @@ program thirdgeneration_hbond_correction
 
     ! Print output
     print '(a)', ''
-    print '(a)', '*************************************'
-    print '(a)', '      Hydrogen-Bond Correction'
-    print '(a)', '*************************************'
+    print '(a)', '*******************************************'
+    print '(a)', ' Third-Generation Hydrogen-Bond Correction'
+    print '(a)', '*******************************************'
     call print_cite()
     print '(a)', ''
-    print '(a)', 'Energy:'
+    print '(a)', 'Correction Energy:'
     print '(a)', ''
     print '(f15.6,a)', energy, ' Hartree'
     print '(f15.6,a)', energy*hartree2kcal, ' kcal/mol'
@@ -204,9 +204,9 @@ program thirdgeneration_hbond_correction
 
     if(lgradient) then
         print '(a)', ''
-        print '(a)', 'Gradient:'
+        print '(a)', 'Correction Gradient:'
         print '(a)', ''
-        print '(a)', '    N  A        dx          dy          dz'
+        print '(a)', '    I  A        dx          dy          dz'
 
         do i = 1, natoms
             print '(I5,2A,3F12.6)', i, '  ', labels(i), gradient(1,i), gradient(2,i), gradient(3,i)
@@ -241,6 +241,7 @@ contains
     subroutine print_cite()
         print '(a)', ''
         print '(a)', 'Cite as:'
+        print '(a)', ''
         print '(a)', '  Martin Korth'
         print '(a)', '  J. Chem. Theory Comput., 2010, 6 (12), pp 3808–3816'
         print '(a)', '  DOI: 10.1021/ct100408b'
