@@ -42,12 +42,9 @@ module hp_hbcorr
     logical :: lmpchbond, virgin
     data virgin /.true./
 
-    ! Parameters
-    double precision :: scale_nsp3, scale_nsp2, scale_osp3, scale_osp2
-
     ! pm6-d3h+ parameters
-    data scale_n / -0.15d0/
-    data scale_o / -0.11d0/
+    !data scale_n / -0.15d0/
+    !data scale_o / -0.11d0/
 
     ! pm6-dh+ parameters
     ! data scale_nsp3 / -0.16d0/
@@ -246,13 +243,14 @@ end function absolute
 !> @param geo, geometry of the system
 !> @param labels, the labels of the atoms
 !>
-subroutine hbond_energy(natoms, geo, labels, hb_energy)
+subroutine hbond_energy(natoms, geo, labels, param, hb_energy)
     implicit none
 
     ! in
     integer :: mode, natoms
     double precision :: geo(3, mxatm)
     integer :: labels(mxatm)
+    double precision :: param(2)
 
     ! out
     double precision :: hb_energy, gradient
@@ -260,7 +258,7 @@ subroutine hbond_energy(natoms, geo, labels, hb_energy)
 
     mode = 1
 
-    call hbond_f3(mode, natoms, geo, labels, hb_energy, hb_gradient)
+    call hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
 
 end subroutine
 !> @brief
@@ -272,13 +270,14 @@ end subroutine
 !> @param geo, geometry of the system
 !> @param labels, the labels of the atoms
 !>
-subroutine hbond_gradient(natoms, geo, labels, hb_energy, gradient)
+subroutine hbond_gradient(natoms, geo, labels, param, hb_energy, gradient)
     implicit none
 
     ! in
     integer :: mode, natoms
     double precision :: geo(3, mxatm)
     integer :: labels(mxatm)
+    double precision :: param(2)
 
     ! out
     double precision :: hb_energy, gradient(3, mxatm)
@@ -293,7 +292,7 @@ subroutine hbond_gradient(natoms, geo, labels, hb_energy, gradient)
 
     mode = 2
 
-    call hbond_f3(mode, natoms, geo, labels, hb_energy, hb_gradient)
+    call hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
 
     do j=1,natoms
         do i=1,3
@@ -314,13 +313,14 @@ end subroutine
 !> @param geo, geometry of the system
 !> @param labels, the labels of the atoms
 !>
-subroutine hbond_f3(mode, natoms, geo, labels, hb_energy, hb_gradient)
+subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
     implicit none
 
     ! in
     integer :: mode, natoms
     double precision :: geo(3, mxatm)
     integer :: labels(mxatm)
+    double precision :: param(2)
 
     ! out
     double precision :: hb_energy, hb_gradient(3, mxatm)
@@ -358,6 +358,7 @@ subroutine hbond_f3(mode, natoms, geo, labels, hb_energy, hb_gradient)
 
     ! Energy
     double precision :: scale_a, scale_b, scale_c
+    double precision :: scale_n, scale_o
     double precision :: xy_dist, zh_dist, zh_inf
     double precision :: damping, damping_h, damping_l, damping_s
     double precision :: hb_correction
@@ -383,6 +384,10 @@ subroutine hbond_f3(mode, natoms, geo, labels, hb_energy, hb_gradient)
         case(2)
             lgradient = .True.
     end select
+
+    ! Parameter
+    scale_n = param(1)
+    scale_o = param(2)
 
     ! Debug
     verbose = .False.

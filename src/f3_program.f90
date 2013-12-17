@@ -32,8 +32,8 @@ program thirdgeneration_hbond_correction
     & 'fr','ra','ac','th','pa','u ','np','pu'/
 
     ! Options
-    character(len=32) :: arg
-    character(len=32) :: paramfile, geofile
+    character(len=64) :: arg
+    character(len=64) :: paramfile, geofile
     character(len=70) :: line
     logical :: param, debug, lgradient
     logical :: exists, skip = .False.
@@ -47,6 +47,7 @@ program thirdgeneration_hbond_correction
     double precision :: geo(3,maxnatoms)
     double precision :: gradient(3,maxnatoms)
     double precision :: energy, gnorm, gmax
+    double precision :: param_list(2) ! Extend for more parameters, fx. S
     double precision :: test(maxnatoms)
     integer :: ilabels(maxnatoms)
 
@@ -181,12 +182,15 @@ program thirdgeneration_hbond_correction
         c_oxygen   = -0.15d0
     endif
 
+    param_list(1) = c_nitrogen
+    param_list(2) = c_oxygen
+
     ! Calculate energy
-    call hbond_energy(natoms, geo, ilabels, energy)
+    call hbond_energy(natoms, geo, ilabels, param_list, energy)
 
     ! Calculate gradient
     if(lgradient) then
-        call hbond_gradient(natoms, geo, ilabels, energy, gradient)
+        call hbond_gradient(natoms, geo, ilabels, param_list, energy, gradient)
     endif
 
     ! Print output
@@ -195,6 +199,12 @@ program thirdgeneration_hbond_correction
     print '(a)', ' Third-Generation Hydrogen-Bond Correction'
     print '(a)', '*******************************************'
     call print_cite()
+    print '(a)', ''
+    print '(a)', 'Parameters:'
+    print '(a)', ''
+    print '(a,f10.4)', '  Nitrogen', c_nitrogen
+    print '(a,f10.4)', '  Oxygen  ', c_oxygen
+    print '(a)', ''
     print '(a)', ''
     print '(a)', 'Correction Energy:'
     print '(a)', ''
