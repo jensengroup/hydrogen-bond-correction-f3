@@ -178,8 +178,8 @@ program thirdgeneration_hbond_correction
         if (success.ne.0) call print_error('Missing Oxygen parameter')
     else
         ! Default parameters
-        c_nitrogen = -0.11d0
-        c_oxygen   = -0.15d0
+        c_nitrogen = -0.15d0
+        c_oxygen   = -0.11d0
     endif
 
     param_list(1) = c_nitrogen

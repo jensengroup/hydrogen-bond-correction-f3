@@ -448,10 +448,6 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
                     hbs(npairs,5)=j
                     hbs(npairs,9)=k
 
-                    if(verbose) then
-                        write(*,*) "JCK Possible Pair", i, j, k
-                    endif
-
                 endif
             enddo
         enddo
@@ -610,7 +606,6 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
         ! hbs2 part
         hbsb=.False.
 
-
         if(nbondsb(i).eq.3.or.nbondsb(i).eq.4)then
 
             old_dist=-1
@@ -716,7 +711,7 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
 
 
         ! write pair data
-        if(verbose.and.debug)then
+        if(.True.)then
             write(*,*)"Possible pair found:"
             write(*,*)i,hbs(i,1),hbs(i,5),hbs(i,9)
             write(*,*)"atom nbonds a",hbs(i,1),nbondsa(i)
@@ -734,7 +729,7 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
 
     ! check for problems
     if(hbsb.or.hbsa)then
-        if(verbose)then
+        if(.true.)then
             write(*,*)
             write(*,*)"Found NO or unknown h-bond constellation." 
             write(*,*)"In the later case, please contact me to fix this ..."
@@ -807,6 +802,8 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
             & de_cos_phi_a2, de_cos_psi_a2, &
             & angle_check)
 
+        print *, i, angle_check
+
         ! Something failed when calculating the angles
         if(angle_check) cycle
 
@@ -820,6 +817,8 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
             & de_cos_phi_b, de_cos_psi_b, &
             & de_cos_phi_b2, de_cos_psi_b2, &
             & angle_check)
+
+        print *, i, angle_check
 
         ! Something failed when calculating the angles
         if(angle_check) cycle
@@ -1041,6 +1040,7 @@ subroutine hb_angles(a, b, c, d, h, &
 
     psi_check_set = .False.
     psi_check_set2 = .False.
+    psi_check = 0.0d0
 
     ! Check for shifting angles
     if(labels(a)==8)then
@@ -1057,30 +1057,23 @@ subroutine hb_angles(a, b, c, d, h, &
             psi_shift = PI/(180.0/54.74)
         endif
     elseif(labels(a)==7)then
-        if(nbonds==1)then
+        if(nbonds==2)then
             phi_shift = PI/(180.0/120.0)
             phi_shift2 = phi_shift
 
             psi_shift = 0.0
         else
-            phi_shift = PI/(180.0/90.0)
+            phi_shift = PI/(180.0/109.48)
             phi_shift2 = phi_shift
 
-            psi_shift = 0.0
+            psi_shift = PI/(180.0/54.74)
             psi_check_set = .true. ! NR3 group
-
-            ! old target values
-            !phi_shift = PI/(180.0/109.48)
-            !phi_shift2 = phi_shift
-
-            !psi_shift = PI/(180.0/54.74)
-            !psi_check_set = .true. ! NR3 group
         endif
     endif
 
-
+    ! TODO CHECK
     ! Torsion check is set to hard to false, because of alot of problems
-    psi_check_set = .False.
+    !psi_check_set = .False.
 
     ! extrapolation between tetragonal and planar NR3 group
     if(psi_check_set)then
@@ -1156,7 +1149,6 @@ subroutine hb_angles(a, b, c, d, h, &
             psi_correct =  PI - psi_correct
         endif
     endif
-
 
     ! correction of NR3 torsion angle for through-bond case
     if(psi_check.lt.0)then ! negative torsion angle occupied by -NR3 r3
