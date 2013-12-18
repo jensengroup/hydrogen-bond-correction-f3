@@ -28,8 +28,8 @@ Use the make script. Change compiler if you use something else than `gfortran`.
 
 Default parameters are for the PM6-D3H+ model.
 
-    nitrogen = -0.15
-    oxygen   = -0.16
+    nitrogen = -0.xx
+    oxygen   = -0.xx
 
 change it either via source code, or use a parameter file.
 

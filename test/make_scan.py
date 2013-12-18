@@ -21,7 +21,8 @@ import matplotlib.colors as col
 s66_hydrogenb  = range(1, 24)  # 1 .. 23
 s66_dispersion = range(24, 47) # 24 .. 46
 
-WORKERS = 8
+# How many CPU's can I use?
+WORKERS = mp.cpu_count()
 
 ######################################################################
 
@@ -157,7 +158,7 @@ if __name__ == '__main__':
     full_rmsd = np.zeros((n_nitrogen, n_oxygen))
     S = full_rmsd
 
-    print "Scanning", n_total, " energies"
+    print "Scanning", n_total, " energies", "using", WORKERS, 'cpu\'s'
 
     # for i in xrange(n_nitrogen):
     #     for j in xrange(n_oxygen):

@@ -711,7 +711,7 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
 
 
         ! write pair data
-        if(.True.)then
+        if(.False.)then
             write(*,*)"Possible pair found:"
             write(*,*)i,hbs(i,1),hbs(i,5),hbs(i,9)
             write(*,*)"atom nbonds a",hbs(i,1),nbondsa(i)
@@ -802,8 +802,6 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
             & de_cos_phi_a2, de_cos_psi_a2, &
             & angle_check)
 
-        print *, i, angle_check
-
         ! Something failed when calculating the angles
         if(angle_check) cycle
 
@@ -817,8 +815,6 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
             & de_cos_phi_b, de_cos_psi_b, &
             & de_cos_phi_b2, de_cos_psi_b2, &
             & angle_check)
-
-        print *, i, angle_check
 
         ! Something failed when calculating the angles
         if(angle_check) cycle
