@@ -161,7 +161,7 @@ end function torsion
 !> - April 2013
 !>
 !>
-double precision function dangle(a1,a2,b1,b2) !MK HERE
+double precision function dangle(a1,a2,b1,b2) 
     implicit none
     double precision, INTENT(INOUT) :: a1,a2,b1,b2
     double precision :: zero, anorm, bnorm, sinth, costh, rcos
@@ -549,7 +549,7 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
                 endif
             enddo
 
-            if(distance(hbs(i,1), hbs(i,9), geo).lt.bonding(hbs(i,1), hbs(i,9), labels))then ! not needed
+            if(distance(hbs(i,1), hbs(i,9), geo).lt.bonding(hbs(i,1), hbs(i,9), labels))then !MK needed
                 hbs(i,4)=hbs(i,9)
             else
                 hbs(i,4)=hbs(i,1)
@@ -580,7 +580,7 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
                 endif
             enddo
 
-            if(distance(hbs(i,1), hbs(i,9), geo).lt.bonding(hbs(i,1), hbs(i,9), labels))then ! not needed
+            if(distance(hbs(i,1), hbs(i,9), geo).lt.bonding(hbs(i,1), hbs(i,9), labels))then !MK needed
                 hbs(i,4) = hbs(i,9)
             else
                 hbs(i,4) = hbs(i,1)
@@ -588,7 +588,7 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
 
         elseif(nbondsa(i).eq.0)then
 
-            if(distance(hbs(i,1), hbs(i,9), geo).lt.bonding(hbs(i,1), hbs(i,9), labels))then ! not needed
+            if(distance(hbs(i,1), hbs(i,9), geo).lt.bonding(hbs(i,1), hbs(i,9), labels))then !MK needed
                 hbs(i,2) = hbs(i,9)
                 hbs(i,3) = hbs(i,9)
                 hbs(i,4) = hbs(i,9)
@@ -656,7 +656,7 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
                 endif
             enddo
 
-            if(distance(hbs(i,5), hbs(i,9), geo).lt.bonding(hbs(i,5), hbs(i,9), labels))then ! not needed
+            if(distance(hbs(i,5), hbs(i,9), geo).lt.bonding(hbs(i,5), hbs(i,9), labels))then !MK needed
                 hbs(i,8)=hbs(i,9)
             else
                 hbs(i,8)=hbs(i,5)
@@ -687,7 +687,7 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
                 endif
             enddo
 
-            if(distance(hbs(i,5), hbs(i,9), geo).lt.bonding(hbs(i,5), hbs(i,9), labels))then ! not needed
+            if(distance(hbs(i,5), hbs(i,9), geo).lt.bonding(hbs(i,5), hbs(i,9), labels))then !MK needed
                 hbs(i,8)=hbs(i,9)
             else
                 hbs(i,8)=hbs(i,5)
@@ -695,7 +695,7 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
 
         elseif(nbondsb(i).eq.0)then
 
-            if(distance(hbs(i,5), hbs(i,9), geo).lt.bonding(hbs(i,5), hbs(i,9), labels))then ! not needed
+            if(distance(hbs(i,5), hbs(i,9), geo).lt.bonding(hbs(i,5), hbs(i,9), labels))then !MK needed
                 hbs(i,6) = hbs(i,9)
                 hbs(i,7) = hbs(i,9)
                 hbs(i,8) = hbs(i,9)
@@ -1024,15 +1024,18 @@ subroutine hb_angles(a, b, c, d, h, &
     double precision :: psi_check, psi_check_bac, psi_check_factor
     double precision :: psi_shift, psi_correct, psi_value, psi_value_2
 
-    logical :: psi_check_set, psi_check_set2
+    logical :: psi_check_set, psi_check_set2, planar !MK
 
     check = .False.
 
-    ! a
-    ! b
-    ! c
-    ! d
-    ! h
+    !MK start
+    ! R3X...H
+    ! a X
+    ! b R3
+    ! c R2
+    ! d R1
+    ! h H
+    !MK stop
 
     psi_check_set = .False.
     psi_check_set2 = .False.
@@ -1052,24 +1055,38 @@ subroutine hb_angles(a, b, c, d, h, &
 
             psi_shift = PI/(180.0/54.74)
         endif
-    elseif(labels(a)==7)then
+    elseif(labels(a)==7)then 
         if(nbonds==2)then
             phi_shift = PI/(180.0/120.0)
             phi_shift2 = phi_shift
 
             psi_shift = 0.0
         else
-            phi_shift = PI/(180.0/109.48)
-            phi_shift2 = phi_shift
-
-            psi_shift = PI/(180.0/54.74)
-            psi_check_set = .true. ! NR3 group
+            !MK start
+            planar=.false.
+            ! check for double bonds    
+            if(a.ne.b.and.distance(a,b,geo).lt.bonding(a,b,labels)*3.0d0/4.0d0*0.95)planar=.true.
+            if(a.ne.c.and.distance(a,c,geo).lt.bonding(a,c,labels)*3.0d0/4.0d0*0.95)planar=.true.
+            if(a.ne.d.and.distance(a,d,geo).lt.bonding(a,d,labels)*3.0d0/4.0d0*0.95)planar=.true.
+            if(.not.planar)then !NR3t
+             phi_shift = PI/(180.0/109.48)
+             phi_shift2 = phi_shift
+             
+             psi_shift = PI/(180.0/54.74)
+             psi_check_set = .true.
+            else !NR3p
+             phi_shift = PI/(180.0/120.0)
+             phi_shift2 = phi_shift
+             
+             psi_shift = PI/(180.0/90.0)
+            endif
+            !MK stop
         endif
     endif
 
-    ! TODO CHECK
+    ! TODO CHECK !MK now without interpolation between NR3t and NR3p 
     ! Torsion check is set to hard to false, because of alot of problems
-    !psi_check_set = .False.
+    ! psi_check_set = .False. 
 
     ! extrapolation between tetragonal and planar NR3 group
     if(psi_check_set)then
@@ -1097,9 +1114,11 @@ subroutine hb_angles(a, b, c, d, h, &
         endif
 
         psi_check = psi_check*180.0/PI
-        psi_shift = psi_shift + PI/(180.0/((54.74-psi_check)/54.74*35.26))
-
-        phi_shift  = phi_shift - PI/(180.0/((54.74-psi_check)/54.74*19.48))
+        !MK start
+        !psi_shift = psi_shift + PI/(180.0/((54.74-psi_check)/54.74*35.26))
+        !phi_shift  = phi_shift - PI/(180.0/((54.74-psi_check)/54.74*19.48))
+        !MK phi_shift  = phi_shift + PI/(180.0/((54.74-psi_check)/54.74*11.52))
+        !MK stop
         phi_shift2 = phi_shift
 
         psi_check = psi_check_bac ! restore sign
@@ -1112,9 +1131,12 @@ subroutine hb_angles(a, b, c, d, h, &
 
     !JCK Depends on torsion
     de_cos_phi2 = 0.0
-    if(psi_check_set)then
-        de_cos_phi2 = -1.0/(54.74*19.48)*2*cos_phi*sin(phi_shift-phi)*psi_check_factor
-    endif
+    !MK start
+    !if(psi_check_set)then
+    !    de_cos_phi2 = -1.0/(54.74*19.48)*2*cos_phi*sin(phi_shift-phi)*psi_check_factor
+    !    !de_cos_phi2 = 1.0/(54.74*11.52)*2*cos_phi*sin(phi_shift-phi)*psi_check_factor
+    !endif
+    !MK stop
     !JCK
 
     cos_phi2 = cos(phi_shift2-phi)
@@ -1122,9 +1144,12 @@ subroutine hb_angles(a, b, c, d, h, &
     if(cos_phi2.gt.cos_phi)then
         cos_phi = cos_phi2
         de_cos_phi = 2.0d0*cos_phi*sin(phi_shift2-phi)
-        if(psi_check_set)then
-            de_cos_phi2 = -1.0/(54.74*19.48)*2*cos_phi*sin(phi_shift2-phi)*psi_check_factor
-        endif
+        !MK start
+        !if(psi_check_set)then
+            !de_cos_phi2 = -1.0/(54.74*19.48)*2*cos_phi*sin(phi_shift2-phi)*psi_check_factor
+            !MK de_cos_phi2 = 1.0/(54.74*11.52)*2*cos_phi*sin(phi_shift2-phi)*psi_check_factor
+        !endif
+        !MK stop
     endif
 
     ! If the cos(phi) is less than 0, cycle
@@ -1137,6 +1162,8 @@ subroutine hb_angles(a, b, c, d, h, &
 
     if(psi_correct.le.-PI) psi_correct = psi_correct + 2.0 * PI
     if(psi_correct.gt.PI)  psi_correct = psi_correct - 2.0 * PI
+
+    !MK continue checking here
 
     if((.not.psi_check_set2).or.(abs(psi_correct*180.0/PI).gt.90))then
         if(psi_correct.lt.0)then
@@ -1156,7 +1183,7 @@ subroutine hb_angles(a, b, c, d, h, &
         cos_psi = cos(psi_value)
 
         de_cos_psi = 2*cos_psi*sin(psi_value)
-        de_cos_psi2 = 1.0/(54.75*35.26)*2*cos_psi*sin(psi_value)*psi_check_factor
+        !MK de_cos_psi2 = 1.0/(54.75*35.26)*2*cos_psi*sin(psi_value)*psi_check_factor
 
     elseif(psi_check.gt.0)then ! positive torsion angle occupied by -NR3 r3
 
@@ -1168,7 +1195,7 @@ subroutine hb_angles(a, b, c, d, h, &
         cos_psi = cos(psi_value)
 
         de_cos_psi = 2*cos_psi*sin(psi_value)
-        de_cos_psi2 = 1.0/(54.75*35.26)*2*cos_psi*sin(psi_value)*psi_check_factor
+        !MK de_cos_psi2 = 1.0/(54.75*35.26)*2*cos_psi*sin(psi_value)*psi_check_factor
 
     else ! planar -NR3 or general case
 
@@ -1185,28 +1212,31 @@ subroutine hb_angles(a, b, c, d, h, &
         de_cos_psi = 2*cos_psi*sin(psi_value)
 
         de_cos_psi2 = 0.0
-        if(psi_check_set)then
-            de_cos_psi2 = 1.0/(54.75*35.26)*2*cos_psi*sin(psi_value)*psi_check_factor
-        endif
-
+        !MK start
+        !if(psi_check_set)then
+        !    de_cos_psi2 = 1.0/(54.75*35.26)*2*cos_psi*sin(psi_value)*psi_check_factor
+        !endif
+        !MK stop
         cos_psi2 = cos(psi_value_2)
 
         if(cos_psi2.gt.cos_psi)then
             cos_psi = cos_psi2
             de_cos_psi = 2*cos_psi*sin(psi_value_2)
-            if(psi_check_set)then
-                de_cos_psi = 1.0/(54.75*35.26)*2*cos_psi*sin(psi_value_2)*psi_check_factor
-            endif
+            !MK start
+            !if(psi_check_set)then
+            !    de_cos_psi = 1.0/(54.75*35.26)*2*cos_psi*sin(psi_value_2)*psi_check_factor
+            !endif
+            !MK stop
         endif
 
     endif
 
-    ! TODO WHAT?
+    ! TODO WHAT? !MK corrects for H...C=0 instead of C=0...H case
     if(distance(h, a, geo).gt.distance(h, b, geo).and.psi_check_set2)then
         cos_psi=0.d0
     endif
 
-    ! TODO WHAT?
+    ! TODO WHAT? !MK corrects for cases with not enough atoms for defining psi
     if(c.eq.d.or.h.eq.d) then
         cos_psi=1.d0
         de_cos_psi=0.d0
@@ -1293,7 +1323,7 @@ subroutine int2xyz(i, g, a, b, c, d, geo, gradient)
         gradient(:,c) = gradient(:,c) + grad(:,3)
         gradient(:,d) = gradient(:,d) + grad(:,4)
     else
-        write(*,*) "ERROR: strange gradient problem for -DH+ in MMDHM.f90::int2xyz - please check this!"
+        write(*,*) "ERROR: strange gradient problem for -DH+ in int2xyz - please check this!" !MK
     endif
 
     return
