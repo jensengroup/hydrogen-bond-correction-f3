@@ -18,8 +18,13 @@ from matplotlib.image import NonUniformImage
 import matplotlib.colors as col
 
 # S66
-s66_hydrogenb  = range(1, 24)  # 1 .. 23
-s66_dispersion = range(24, 47) # 24 .. 46
+s66_hb   = range(1, 24)  # 1 .. 23
+s66_disp = range(24, 47) # 24 .. 46
+
+# S22
+s22_hb   = range(1, 8)  # 1 .. 7
+s22_disp = range(8, 16) # 8 .. 15
+
 
 # How many CPU's can I use?
 WORKERS = mp.cpu_count()
@@ -100,23 +105,41 @@ def calculate_hydrogen(param, structure_set):
 
 if __name__ == '__main__':
 
+    s22 = []
     s66 = []
+    s22_lib = []
     s66_lib = []
+    s22_pm6 = []
     s66_pm6 = []
-    s66_hb = []
 
-    s66_model = []
-
-    # S66
-    cr = csv.reader(open('begdb_s66_energies.csv', 'rb'), quotechar="'")
-
+    # S22
+    cr = csv.reader(open('energies_s22.csv', 'rb'), quotechar="'")
     for row in cr:
         sys_id = row[0]
         sys_name = row[1]
         sys_energy = row[3]
         sys_energy = float(sys_energy)
 
-        sys_filename = sys_id+sys_name
+        sys_filename = 's22/'+sys_id+sys_name
+        sys_filename = sys_filename.replace('...', '')
+        sys_filename = sys_filename.replace('(', '')
+        sys_filename = sys_filename.replace(')', '')
+        sys_filename = sys_filename.replace(' ', '')
+        sys_filename = sys_filename.replace('-', '')
+
+        s22_lib.append(sys_energy)
+        s22.append(sys_filename)
+
+
+    # S66
+    cr = csv.reader(open('energies_s66.csv', 'rb'), quotechar="'")
+    for row in cr:
+        sys_id = row[0]
+        sys_name = row[1]
+        sys_energy = row[3]
+        sys_energy = float(sys_energy)
+
+        sys_filename = 's66/'+sys_id+sys_name
         sys_filename = sys_filename.replace('...', '')
         sys_filename = sys_filename.replace('(', '')
         sys_filename = sys_filename.replace(')', '')
@@ -127,9 +150,26 @@ if __name__ == '__main__':
         s66.append(sys_filename)
 
 
-    # PM6-D3
-    cr = csv.reader(open('pm6-d3_energies.csv', 'rb'))
+    # S22 PM6-D3
+    cr = csv.reader(open('energies_s22_pm6-d3.csv', 'rb'))
+    for row in cr:
+        sys_id = row[0]
+        sys_name = row[1]
+        sys_energy = row[2]
+        sys_energy = float(sys_energy)
 
+        sys_filename = sys_id+sys_name
+        sys_filename = sys_filename.replace('...', '')
+        sys_filename = sys_filename.replace('(', '')
+        sys_filename = sys_filename.replace(')', '')
+        sys_filename = sys_filename.replace(' ', '')
+        sys_filename = sys_filename.replace('-', '')
+
+        s22_pm6.append(sys_energy)
+
+
+    # S66 PM6-D3
+    cr = csv.reader(open('energies_s66_pm6-d3.csv', 'rb'))
     for row in cr:
         sys_id = row[0]
         sys_name = row[1]
@@ -144,6 +184,11 @@ if __name__ == '__main__':
         sys_filename = sys_filename.replace('-', '')
 
         s66_pm6.append(sys_energy)
+
+
+    shb = s22[:7] + s66[:23]
+    shb_lib = s22_lib[:7] + s66_lib[:23]
+    shb_pm6 = s22_pm6[:7] + s66_pm6[:23]
 
 
     # SCAN PARAMETER SPACE
@@ -188,9 +233,9 @@ if __name__ == '__main__':
                 O = scan_oxygen[j]
                 param = (N, O)
 
-                hb_energies = calculate_hydrogen(param, s66[:23])
-                param_energies = s66_pm6[:23] + hb_energies
-                param_rmsd = rmsd(s66_lib[:23], param_energies)
+                hb_energies = calculate_hydrogen(param, shb)
+                param_energies = shb_pm6 + hb_energies
+                param_rmsd = rmsd(shb_lib, param_energies)
                 S[i, j] = param_rmsd
 
 
@@ -230,7 +275,7 @@ if __name__ == '__main__':
 
     # Save figure
     plt.savefig('hydrogen_rmsd_scan.png')
-    plt.savefig('hydrogen_rmsd_scan.tif')
-    plt.savefig('hydrogen_rmsd_scan.eps')
+    # plt.savefig('hydrogen_rmsd_scan.tif')
+    # plt.savefig('hydrogen_rmsd_scan.eps')
 
 

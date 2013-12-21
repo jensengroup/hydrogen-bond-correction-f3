@@ -6,8 +6,12 @@ import csv
 import re
 
 # S66
-s66_hydrogenb  = range(1, 24)  # 1 .. 23
-s66_dispersion = range(24, 47) # 24 .. 46
+s66_hb   = range(1, 24)  # 1 .. 23
+s66_disp = range(24, 47) # 24 .. 46
+
+# S22
+s22_hb   = range(1, 8)  # 1 .. 7
+s22_disp = range(8, 16) # 8 .. 15
 
 ######################################################################
 
@@ -52,15 +56,35 @@ def rmsd(L1, L2):
 if __name__ == '__main__':
 
     s66 = []
+    s22 = []
+
     s66_lib = []
-    s66_pm6 = []
-    s66_hb = []
+    s22_lib = []
 
     s66_model = []
+    s22_model = []
+
+    # S22
+    cr = csv.reader(open('energies_s22.csv', 'rb'), quotechar="'")
+    for row in cr:
+        sys_id = row[0]
+        sys_name = row[1]
+        sys_energy = row[3]
+        sys_energy = float(sys_energy)
+
+        sys_filename = sys_id+sys_name
+        sys_filename = sys_filename.replace('...', '')
+        sys_filename = sys_filename.replace('(', '')
+        sys_filename = sys_filename.replace(')', '')
+        sys_filename = sys_filename.replace(' ', '')
+        sys_filename = sys_filename.replace('-', '')
+
+        s22_lib.append(sys_energy)
+        s22.append(sys_filename)
+
 
     # S66
-    cr = csv.reader(open('begdb_s66_energies.csv', 'rb'), quotechar="'")
-
+    cr = csv.reader(open('energies_s66.csv', 'rb'), quotechar="'")
     for row in cr:
         sys_id = row[0]
         sys_name = row[1]
@@ -78,9 +102,8 @@ if __name__ == '__main__':
         s66.append(sys_filename)
 
 
-    # PM6-D3
-    cr = csv.reader(open('pm6-d3_energies.csv', 'rb'))
-
+    # S22 PM6-D3
+    cr = csv.reader(open('energies_s22_pm6-d3.csv', 'rb'))
     for row in cr:
         sys_id = row[0]
         sys_name = row[1]
@@ -94,39 +117,73 @@ if __name__ == '__main__':
         sys_filename = sys_filename.replace(' ', '')
         sys_filename = sys_filename.replace('-', '')
 
-        s66_pm6.append(sys_energy)
+        x = sys_filename
 
-    for x in s66:
-        energy_a = return_code('../f3_exe -p param.dat structures/'+x+'_a.xyz | grep -A3 "Correction Energy" | grep kcal')
-        energy_b = return_code('../f3_exe -p param.dat structures/'+x+'_b.xyz | grep -A3 "Correction Energy" | grep kcal')
-        energy_c = return_code('../f3_exe -p param.dat structures/'+x+'_c.xyz | grep -A3 "Correction Energy" | grep kcal')
-        s66_hb.append(energy_c - energy_a - energy_b)
+        energy_a = return_code('../f3_exe -p param.dat structures/s22/'+x+'_a.xyz | grep -A3 "Correction Energy" | grep kcal')
+        energy_b = return_code('../f3_exe -p param.dat structures/s22/'+x+'_b.xyz | grep -A3 "Correction Energy" | grep kcal')
+        energy_c = return_code('../f3_exe -p param.dat structures/s22/'+x+'_c.xyz | grep -A3 "Correction Energy" | grep kcal')
 
-
-    # FULL RMSD
-    for i in range(len(s66)):
-        # print "{0:26s} {1:10.4f} {2:10.4f} {3:10.4f} ".format(s66[i], s66_lib[i], s66_pm6[i]+s66_hb[i], s66_pm6[i]+s66_hb[i]-s66_lib[i])
-        s66_model.append(s66_pm6[i]+s66_hb[i])
-
-    s66_model = np.array(s66_model)
-    s66_lib = np.array(s66_lib)
-
-    s66_rmsd = rmsd(s66_model, s66_lib)
-
-    # print "RMSD: {0:10.4f}".format(s66_rmsd)
-    # print "MAX:  {0:10.4f}".format(max(abs(s66_lib-s66_model)))
+        # PM6-D3H+
+        s22_model.append(sys_energy + energy_c - energy_a - energy_b)
 
 
-    # HYDROGEN BOND RMSD
-    s66_model = []
+    # S66 PM6-D3
+    cr = csv.reader(open('energies_s66_pm6-d3.csv', 'rb'))
+    for row in cr:
+        sys_id = row[0]
+        sys_name = row[1]
+        sys_energy = row[2]
+        sys_energy = float(sys_energy)
 
-    for i in range(len(s66_hydrogenb)):
-        print "{0:26s} {1:10.4f} {2:10.4f} {3:10.4f} ".format(s66[i], s66_lib[i], s66_pm6[i]+s66_hb[i], s66_pm6[i]+s66_hb[i]-s66_lib[i])
-        s66_model.append(s66_pm6[i]+s66_hb[i])
+        sys_filename = sys_id+sys_name
+        sys_filename = sys_filename.replace('...', '')
+        sys_filename = sys_filename.replace('(', '')
+        sys_filename = sys_filename.replace(')', '')
+        sys_filename = sys_filename.replace(' ', '')
+        sys_filename = sys_filename.replace('-', '')
 
-    s66_model = np.array(s66_model)
-    s66_rmsd = rmsd(s66_model, s66_lib[:23])
-    print "RMSD: {0:10.4f}".format(s66_rmsd)
-    print "MAX:  {0:10.4f}".format(max(abs(s66_lib[:23]-s66_model)))
+        x = sys_filename
 
+        energy_a = return_code('../f3_exe -p param.dat structures/s66/'+x+'_a.xyz | grep -A3 "Correction Energy" | grep kcal')
+        energy_b = return_code('../f3_exe -p param.dat structures/s66/'+x+'_b.xyz | grep -A3 "Correction Energy" | grep kcal')
+        energy_c = return_code('../f3_exe -p param.dat structures/s66/'+x+'_c.xyz | grep -A3 "Correction Energy" | grep kcal')
+
+        # PM6-D3H+
+        s66_model.append(sys_energy + energy_c - energy_a - energy_b)
+
+
+    sxx_model = np.array(s22_model + s66_model)
+    sxx_lib   = np.array(s22_lib   + s66_lib)
+    sxx_rmsd = rmsd(sxx_model, sxx_lib)
+
+    shb_model = []
+    shb_lib = []
+
+    print "Full sets"
+    print "RMSD: {0:10.4f}".format(sxx_rmsd)
+    print "MAX:  {0:10.4f}".format(max(abs(sxx_lib-sxx_model)))
+    print
+    print "Hydrogen-Bonds"
+    print
+    print "S22"
+
+    for i in s22_hb:
+         print " {0:26s} {1:10.4f} {2:10.4f} {3:10.4f} ".format(s22[i], s22_lib[i], s22_model[i], s22_model[i]-s22_lib[i])
+         shb_model.append(s22_model[i])
+         shb_lib.append(s22_lib[i])
+
+    print
+    print "S66"
+
+    for i in s66_hb:
+         print " {0:26s} {1:10.4f} {2:10.4f} {3:10.4f} ".format(s66[i], s66_lib[i], s66_model[i], s66_model[i]-s66_lib[i])
+         shb_model.append(s66_model[i])
+         shb_lib.append(s66_lib[i])
+
+    print
+    shb_model = np.array(shb_model)
+    shb_lib = np.array(shb_lib)
+    shb_rmsd = rmsd(shb_model, shb_lib)
+    print "RMSD: {0:10.4f}".format(shb_rmsd)
+    print "MAX:  {0:10.4f}".format(max(abs(shb_lib-shb_model)))
 
