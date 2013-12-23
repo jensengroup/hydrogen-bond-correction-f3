@@ -1159,11 +1159,10 @@ subroutine hb_angles(a, b, c, d, h, &
     ! torsion angle
     ! psi_correct = torsion(hbs(i,3), hbs(i,2), hbs(i,1), hbs(i,9), geo)
     psi_correct = torsion(c, b, a, h, geo)
+    if(psi_check_set2)psi_correct=torsion(c,d,a,h,geo) !MKnew
 
     if(psi_correct.le.-PI) psi_correct = psi_correct + 2.0 * PI
     if(psi_correct.gt.PI)  psi_correct = psi_correct - 2.0 * PI
-
-    !MK continue checking here
 
     if((.not.psi_check_set2).or.(abs(psi_correct*180.0/PI).gt.90))then
         if(psi_correct.lt.0)then
@@ -1234,13 +1233,26 @@ subroutine hb_angles(a, b, c, d, h, &
     !MK corrects for H...C=0 instead of C=0...H case
     if(distance(h, a, geo).gt.distance(h, b, geo).and.psi_check_set2)then
         cos_psi=0.d0
+        de_cos_psi=0.0d0 !MKnew
     endif
 
     !MK corrects for cases with not enough atoms for defining psi
-    if(c.eq.d.or.h.eq.d) then
+    !MKnewStart
+    if(b.eq.a.or.b.eq.h)then 
+        cos_phi=1.d0
+        de_cos_phi=0.0d0
+    endif
+    if(c.eq.a.or.c.eq.h) then 
         cos_psi=1.d0
         de_cos_psi=0.d0
     endif
+    if(d.eq.h)then
+        cos_phi=1.d0
+        de_cos_phi=0.0d0
+        cos_psi=1.d0
+        de_cos_psi=0.0d0
+    endif
+    !MKnewStop
 
     ! If cos(psi) is less than zero, skip
     if(cos_psi.le.0) check = .True.
