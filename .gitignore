@@ -1,3 +1,5 @@
 f3_exe
 *.o
 *.mod
+
+test/hydrogen_rmsd_scan*
