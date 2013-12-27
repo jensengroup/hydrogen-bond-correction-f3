@@ -17,6 +17,17 @@ import matplotlib.pyplot as plt
 from matplotlib.image import NonUniformImage
 import matplotlib.colors as col
 
+# Use Latex
+from matplotlib import rc
+# rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+# rc('text', usetex=True)
+rc('font',**{'family':'serif','serif':['Palatino']})
+rc('text', usetex=True)
+rc('xtick', labelsize=15)
+rc('ytick', labelsize=15)
+matplotlib.rcParams.update({'font.size': 20})
+
+
 # S66
 s66_hb   = range(1, 24)  # 1 .. 23
 s66_disp = range(24, 47) # 24 .. 46
@@ -252,30 +263,29 @@ if __name__ == '__main__':
 
     print 'c_nitrogen: ', scan_nitrogen[i]
     print 'c_oxygen:   ', scan_oxygen[j]
-    print 'rmsd min ', np.min(full_rmsd)
+    print 'rmsd min    ', np.min(full_rmsd)
 
-    extent = [scan_nitrogen[-1], scan_nitrogen[0], scan_oxygen[-1], scan_oxygen[0]]
+    extent = [scan_nitrogen[0], scan_nitrogen[-1], scan_oxygen[0], scan_oxygen[-1]]
 
     im = plt.imshow(full_rmsd,
                     interpolation='nearest',
                     extent=extent,
-                    cmap = 'Spectral')
+                    cmap='Spectral')
 
     # Labels
-    plt.xlabel('$C_O$')
-    plt.ylabel('$C_N$')
+    plt.xlabel('$\mathrm{C}_\mathrm{O}$')
+    plt.ylabel('$\mathrm{C}_\mathrm{N}$')
     # plt.title('Scan of NSP and OSP')
 
     # Color-bar
     cbar = plt.colorbar(im)
-    cbar.set_label('RMSD [kcal/mol]', rotation=270)
+    cbar.set_label('$\mathrm{RMSD [kcal/mol]}$', rotation=270)
 
     # Grid
     plt.grid(True)
 
     # Save figure
     plt.savefig('hydrogen_rmsd_scan.png')
-    # plt.savefig('hydrogen_rmsd_scan.tif')
-    # plt.savefig('hydrogen_rmsd_scan.eps')
-
+    plt.savefig('hydrogen_rmsd_scan.tif')
+    plt.savefig('hydrogen_rmsd_scan.eps')
 
