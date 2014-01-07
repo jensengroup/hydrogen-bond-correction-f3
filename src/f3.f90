@@ -346,7 +346,7 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
     double precision :: cos_theta, cos_phi_a, cos_phi_b, cos_psi_a, cos_psi_b
     double precision :: cos_phi_a2, cos_phi_b2
     double precision :: cos_psi_a2, cos_psi_b2
-    logical :: angle_check
+    logical :: angle_check,torsion_check_a,torsion_check_b !MKnew2
 
     ! dE Angles
     double precision :: de_cos_theta
@@ -800,7 +800,7 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
             & cos_phi_a2, cos_psi_a2, &
             & de_cos_phi_a, de_cos_psi_a, &
             & de_cos_phi_a2, de_cos_psi_a2, &
-            & angle_check)
+            & angle_check,torsion_check_a) !MKnew2
 
         ! Something failed when calculating the angles
         if(angle_check) cycle
@@ -814,7 +814,7 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
             & cos_phi_b2, cos_psi_b2, &
             & de_cos_phi_b, de_cos_psi_b, &
             & de_cos_phi_b2, de_cos_psi_b2, &
-            & angle_check)
+            & angle_check,torsion_check_b) !MKnew2
 
         ! Something failed when calculating the angles
         if(angle_check) cycle
@@ -961,10 +961,20 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
             call int2xyz(3, de_dphi_a, hbs(i,2), hbs(i,1), hbs(i,9), 0, geo, hb_gradient)
             call int2xyz(3, de_dphi_b, hbs(i,6), hbs(i,5), hbs(i,9), 0, geo, hb_gradient)
 
-            call int2xyz(4, -de_dpsi_a, hbs(i,3), hbs(i,2), hbs(i,1), hbs(i,9), geo, hb_gradient)
+            !MKnew2 start
+            if(torsion_check_a)then
+             call int2xyz(4, -de_dpsi_a, hbs(i,3), hbs(i,4), hbs(i,1), hbs(i,9), geo, hb_gradient)
+            else
+             call int2xyz(4, -de_dpsi_a, hbs(i,3), hbs(i,2), hbs(i,1), hbs(i,9), geo, hb_gradient)
+            endif
             call int2xyz(4, de_dpsi_a2, hbs(i,3), hbs(i,2), hbs(i,1), hbs(i,4), geo, hb_gradient)
-            call int2xyz(4, -de_dpsi_b, hbs(i,7), hbs(i,6), hbs(i,5), hbs(i,9), geo, hb_gradient)
+            if(torsion_check_b)then
+             call int2xyz(4, -de_dpsi_b, hbs(i,7), hbs(i,8), hbs(i,5), hbs(i,9), geo, hb_gradient)
+            else
+             call int2xyz(4, -de_dpsi_b, hbs(i,7), hbs(i,6), hbs(i,5), hbs(i,9), geo, hb_gradient)
+            endif
             call int2xyz(4, de_dpsi_b2, hbs(i,7), hbs(i,6), hbs(i,5), hbs(i,8), geo, hb_gradient)
+            !MKnew2 stop
 
             if(zh_inf.eq.1)then
                 call int2xyz(2, de_dh, hbs(i,9), hbs(i,1), 0, 0, geo, hb_gradient)
@@ -1000,7 +1010,7 @@ subroutine hb_angles(a, b, c, d, h, &
                    & cos_phi2, cos_psi2, &
                    & de_cos_phi, de_cos_psi, &
                    & de_cos_phi2, de_cos_psi2, &
-                   & check)
+                   & check,psi_check_set2) !MKnew2
     implicit none
 
     ! in
