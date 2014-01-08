@@ -904,17 +904,17 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
             de_dpsi_b = scale_c/xy_dist**2*cos_theta**2*cos_phi_a**2*cos_psi_a**2 &
             & *cos_phi_b**2*de_cos_psi_b*damping
 
-            de_dpsi_a2 = scale_c/xy_dist**2*cos_theta**2*cos_phi_a**2*de_cos_psi_a2 &
-            & *cos_phi_b**2*cos_psi_b**2*damping
+            !de_dpsi_a2 = scale_c/xy_dist**2*cos_theta**2*cos_phi_a**2*de_cos_psi_a2 &
+            !& *cos_phi_b**2*cos_psi_b**2*damping
 
-            de_dpsi_a2 = de_dpsi_a2 + scale_c/xy_dist**2*cos_theta**2*de_cos_phi_a2*cos_psi_a**2 &
-            & *cos_phi_b**2*cos_psi_b**2*damping
+            !de_dpsi_a2 = de_dpsi_a2 + scale_c/xy_dist**2*cos_theta**2*de_cos_phi_a2*cos_psi_a**2 &
+            !& *cos_phi_b**2*cos_psi_b**2*damping
 
-            de_dpsi_b2 = scale_c/xy_dist**2*cos_theta**2*cos_phi_a**2*cos_psi_a2**2 &
-            & *cos_phi_b**2*de_cos_psi_b2*damping
+            !de_dpsi_b2 = scale_c/xy_dist**2*cos_theta**2*cos_phi_a**2*cos_psi_a2**2 &
+            !& *cos_phi_b**2*de_cos_psi_b2*damping
 
-            de_dpsi_b2 = de_dpsi_b2 + scale_c/xy_dist**2*cos_theta**2*cos_phi_a**2*cos_psi_a**2 &
-            & *de_cos_phi_b2*cos_psi_b**2*damping
+            !de_dpsi_b2 = de_dpsi_b2 + scale_c/xy_dist**2*cos_theta**2*cos_phi_a**2*cos_psi_a**2 &
+            !& *de_cos_phi_b2*cos_psi_b**2*damping
 
             temp = exp(-60.d0*(zh_dist/covcut-1.d0))
 
@@ -967,13 +967,13 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
             else
              call int2xyz(4, -de_dpsi_a, hbs(i,3), hbs(i,2), hbs(i,1), hbs(i,9), geo, hb_gradient)
             endif
-            call int2xyz(4, de_dpsi_a2, hbs(i,3), hbs(i,2), hbs(i,1), hbs(i,4), geo, hb_gradient)
+            !call int2xyz(4, de_dpsi_a2, hbs(i,3), hbs(i,2), hbs(i,1), hbs(i,4), geo, hb_gradient)
             if(torsion_check_b)then
              call int2xyz(4, -de_dpsi_b, hbs(i,7), hbs(i,8), hbs(i,5), hbs(i,9), geo, hb_gradient)
             else
              call int2xyz(4, -de_dpsi_b, hbs(i,7), hbs(i,6), hbs(i,5), hbs(i,9), geo, hb_gradient)
             endif
-            call int2xyz(4, de_dpsi_b2, hbs(i,7), hbs(i,6), hbs(i,5), hbs(i,8), geo, hb_gradient)
+            !call int2xyz(4, de_dpsi_b2, hbs(i,7), hbs(i,6), hbs(i,5), hbs(i,8), geo, hb_gradient)
             !MKnew2 stop
 
             if(zh_inf.eq.1)then
@@ -1153,7 +1153,7 @@ subroutine hb_angles(a, b, c, d, h, &
 
     if(cos_phi2.gt.cos_phi)then
         cos_phi = cos_phi2
-        de_cos_phi = 2.0d0*cos_phi2*sin(phi_shift2-phi) !MKnew3 cos_phi2 instead of cos_phi3
+        de_cos_phi = 2.0d0*cos_phi*sin(phi_shift2-phi) 
         !MK start
         !if(psi_check_set)then
             !de_cos_phi2 = -1.0/(54.74*19.48)*2*cos_phi*sin(phi_shift2-phi)*psi_check_factor
@@ -1183,7 +1183,7 @@ subroutine hb_angles(a, b, c, d, h, &
     endif
 
     ! correction of NR3 torsion angle for through-bond case
-    if(psi_check.lt.0)then ! negative torsion angle occupied by -NR3 r3
+    if(psi_check.lt.0.0d0)then ! negative torsion angle occupied by -NR3 r3
 
         psi_value = psi_shift - psi_correct
         if(psi_value.le.-PI) psi_value = psi_value + 2.0 * PI
@@ -1193,8 +1193,9 @@ subroutine hb_angles(a, b, c, d, h, &
 
         de_cos_psi = 2*cos_psi*sin(psi_value)
         !MK de_cos_psi2 = 1.0/(54.75*35.26)*2*cos_psi*sin(psi_value)*psi_check_factor
+        de_cos_psi2 = 0.0d0
 
-    elseif(psi_check.gt.0)then ! positive torsion angle occupied by -NR3 r3
+    elseif(psi_check.gt.0.0d0)then ! positive torsion angle occupied by -NR3 r3
 
         psi_value = -psi_shift - psi_correct
 
@@ -1205,6 +1206,7 @@ subroutine hb_angles(a, b, c, d, h, &
 
         de_cos_psi = 2*cos_psi*sin(psi_value)
         !MK de_cos_psi2 = 1.0/(54.75*35.26)*2*cos_psi*sin(psi_value)*psi_check_factor
+        de_cos_psi2 = 0.0d0
 
     else ! planar -NR3 or general case
 
@@ -1220,7 +1222,7 @@ subroutine hb_angles(a, b, c, d, h, &
         cos_psi = cos(psi_value)
         de_cos_psi = 2*cos_psi*sin(psi_value)
 
-        de_cos_psi2 = 0.0
+        de_cos_psi2 = 0.0d0
         !MK start
         !if(psi_check_set)then
         !    de_cos_psi2 = 1.0/(54.75*35.26)*2*cos_psi*sin(psi_value)*psi_check_factor
@@ -1244,6 +1246,7 @@ subroutine hb_angles(a, b, c, d, h, &
     if(distance(h, a, geo).gt.distance(h, b, geo).and.psi_check_set2)then
         cos_psi=0.d0
         de_cos_psi=0.0d0 !MKnew
+        de_cos_psi2=0.0d0
     endif
 
     !MK corrects for cases with not enough atoms for defining psi
@@ -1251,16 +1254,19 @@ subroutine hb_angles(a, b, c, d, h, &
     if(b.eq.a.or.b.eq.h)then 
         cos_phi=1.d0
         de_cos_phi=0.0d0
+        de_cos_psi2=0.0d0
     endif
     if(c.eq.a.or.c.eq.h) then 
         cos_psi=1.d0
         de_cos_psi=0.d0
+        de_cos_psi2=0.0d0
     endif
     if(d.eq.h)then
         cos_phi=1.d0
         de_cos_phi=0.0d0
         cos_psi=1.d0
         de_cos_psi=0.0d0
+        de_cos_psi2=0.0d0
     endif
     !MKnewStop
 
