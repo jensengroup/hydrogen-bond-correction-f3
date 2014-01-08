@@ -1153,7 +1153,7 @@ subroutine hb_angles(a, b, c, d, h, &
 
     if(cos_phi2.gt.cos_phi)then
         cos_phi = cos_phi2
-        de_cos_phi = 2.0d0*cos_phi*sin(phi_shift2-phi)
+        de_cos_phi = 2.0d0*cos_phi2*sin(phi_shift2-phi) !MKnew3 cos_phi2 instead of cos_phi3
         !MK start
         !if(psi_check_set)then
             !de_cos_phi2 = -1.0/(54.74*19.48)*2*cos_phi*sin(phi_shift2-phi)*psi_check_factor
