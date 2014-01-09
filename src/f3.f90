@@ -963,13 +963,13 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
 
             !MKnew2 start
             if(torsion_check_a)then
-             call int2xyz(4, -de_dpsi_a, hbs(i,3), hbs(i,4), hbs(i,1), hbs(i,9), geo, hb_gradient)
+             call int2xyz(4, -de_dpsi_a, hbs(i,3), hbs(i,4), hbs(i,1), hbs(i,9), geo, hb_gradient) 
             else
              call int2xyz(4, -de_dpsi_a, hbs(i,3), hbs(i,2), hbs(i,1), hbs(i,9), geo, hb_gradient)
             endif
             !call int2xyz(4, de_dpsi_a2, hbs(i,3), hbs(i,2), hbs(i,1), hbs(i,4), geo, hb_gradient)
             if(torsion_check_b)then
-             call int2xyz(4, -de_dpsi_b, hbs(i,7), hbs(i,8), hbs(i,5), hbs(i,9), geo, hb_gradient)
+             call int2xyz(4, -de_dpsi_b, hbs(i,7), hbs(i,8), hbs(i,5), hbs(i,9), geo, hb_gradient) 
             else
              call int2xyz(4, -de_dpsi_b, hbs(i,7), hbs(i,6), hbs(i,5), hbs(i,9), geo, hb_gradient)
             endif
@@ -1075,9 +1075,9 @@ subroutine hb_angles(a, b, c, d, h, &
             !MK start
             planar=.false.
             ! check for double bonds
-            if(a.ne.b.and.distance(a,b,geo).lt.bonding(a,b,labels)*3.0d0/4.0d0*0.95)planar=.true.
-            if(a.ne.c.and.distance(a,c,geo).lt.bonding(a,c,labels)*3.0d0/4.0d0*0.95)planar=.true.
-            if(a.ne.d.and.distance(a,d,geo).lt.bonding(a,d,labels)*3.0d0/4.0d0*0.95)planar=.true.
+            if(a.ne.b.and.distance(a,b,geo).lt.bonding(a,b,labels)*3.0d0/4.0d0*0.96)planar=.true. !MKnew5
+            if(a.ne.c.and.distance(a,c,geo).lt.bonding(a,c,labels)*3.0d0/4.0d0*0.96)planar=.true. !MKnew5
+            if(a.ne.d.and.distance(a,d,geo).lt.bonding(a,d,labels)*3.0d0/4.0d0*0.96)planar=.true. !MKnew5
             if(.not.planar)then !NR3t
              phi_shift = PI/(180.0/109.48)
              phi_shift2 = phi_shift
@@ -1104,8 +1104,8 @@ subroutine hb_angles(a, b, c, d, h, &
         !JCK psi_check = torsion(hbs(i,3), hbs(i,2), hbs(i,1), hbs(i,4), geo) !torsion2
         psi_check = torsion(c, b, a, d, geo) !torsion2
 
-        if(psi_check.le.-PI) psi_check = psi_check + 2.0 * PI
-        if(psi_check.gt.PI)  psi_check = psi_check - 2.0 * PI
+        !MKtest if(psi_check.le.-PI) psi_check = psi_check + 2.0 * PI
+        !MKtest if(psi_check.gt.PI)  psi_check = psi_check - 2.0 * PI
 
         if(psi_check.lt.0)then
             psi_check =-PI - psi_check
@@ -1169,12 +1169,12 @@ subroutine hb_angles(a, b, c, d, h, &
     ! torsion angle
     ! psi_correct = torsion(hbs(i,3), hbs(i,2), hbs(i,1), hbs(i,9), geo)
     psi_correct = torsion(c, b, a, h, geo)
-    if(psi_check_set2)psi_correct=torsion(c,d,a,h,geo) !MKnew
+    if(psi_check_set2)psi_correct=torsion(c,d,a,h,geo) !MKnew 
 
-    if(.not.psi_check_set2)then !MKnew4
-     if(psi_correct.le.-PI) psi_correct = psi_correct + 2.0 * PI
-     if(psi_correct.gt.PI)  psi_correct = psi_correct - 2.0 * PI
-    endif !MKnew4
+    !MKtest if(.not.psi_check_set2)then !MKnew4
+    !MKtest  if(psi_correct.le.-PI) psi_correct = psi_correct + 2.0 * PI
+    !MKtest  if(psi_correct.gt.PI)  psi_correct = psi_correct - 2.0 * PI
+    !MKtest endif !MKnew4
 
     if((.not.psi_check_set2).or.(abs(psi_correct*180.0/PI).gt.90))then
         if(psi_correct.lt.0)then
@@ -1188,8 +1188,8 @@ subroutine hb_angles(a, b, c, d, h, &
     if(psi_check.lt.0.0d0)then ! negative torsion angle occupied by -NR3 r3
 
         psi_value = psi_shift - psi_correct
-        if(psi_value.le.-PI) psi_value = psi_value + 2.0 * PI
-        if(psi_value.gt.PI)  psi_value = psi_value - 2.0 * PI
+        !MKtest if(psi_value.le.-PI) psi_value = psi_value + 2.0 * PI
+        !MKtest if(psi_value.gt.PI)  psi_value = psi_value - 2.0 * PI
 
         cos_psi = cos(psi_value)
 
@@ -1201,8 +1201,8 @@ subroutine hb_angles(a, b, c, d, h, &
 
         psi_value = -psi_shift - psi_correct
 
-        if(psi_value.le.-PI) psi_value = psi_value + 2.0 * PI
-        if(psi_value.gt.PI)  psi_value = psi_value - 2.0 * PI
+        !MKtest if(psi_value.le.-PI) psi_value = psi_value + 2.0 * PI
+        !MKtest if(psi_value.gt.PI)  psi_value = psi_value - 2.0 * PI
 
         cos_psi = cos(psi_value)
 
@@ -1215,11 +1215,11 @@ subroutine hb_angles(a, b, c, d, h, &
         psi_value   =  psi_shift - psi_correct
         psi_value_2 = -psi_shift - psi_correct
 
-        if(psi_value.le.-PI) psi_value = psi_value + 2.0 * PI
-        if(psi_value.gt.PI)  psi_value = psi_value - 2.0 * PI
+        !MKtest if(psi_value.le.-PI) psi_value = psi_value + 2.0 * PI
+        !MKtest if(psi_value.gt.PI)  psi_value = psi_value - 2.0 * PI
 
-        if(psi_value_2.le.-PI) psi_value_2 = psi_value_2 + 2.0 * PI
-        if(psi_value_2.gt.PI)  psi_value_2 = psi_value_2 - 2.0 * PI
+        !MKtest if(psi_value_2.le.-PI) psi_value_2 = psi_value_2 + 2.0 * PI
+        !MKtest if(psi_value_2.gt.PI)  psi_value_2 = psi_value_2 - 2.0 * PI
 
         cos_psi = cos(psi_value)
         de_cos_psi = 2*cos_psi*sin(psi_value)
