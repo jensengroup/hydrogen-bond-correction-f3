@@ -1171,8 +1171,10 @@ subroutine hb_angles(a, b, c, d, h, &
     psi_correct = torsion(c, b, a, h, geo)
     if(psi_check_set2)psi_correct=torsion(c,d,a,h,geo) !MKnew
 
-    if(psi_correct.le.-PI) psi_correct = psi_correct + 2.0 * PI
-    if(psi_correct.gt.PI)  psi_correct = psi_correct - 2.0 * PI
+    if(.not.psi_check_set2)then !MKnew4
+     if(psi_correct.le.-PI) psi_correct = psi_correct + 2.0 * PI
+     if(psi_correct.gt.PI)  psi_correct = psi_correct - 2.0 * PI
+    endif !MKnew4
 
     if((.not.psi_check_set2).or.(abs(psi_correct*180.0/PI).gt.90))then
         if(psi_correct.lt.0)then
