@@ -28,8 +28,8 @@ Use the make script. Change compiler if you use something else than `gfortran`.
 
 Default parameters are for the PM6-D3H+ model.
 
-    nitrogen = -0.xx
-    oxygen   = -0.xx
+    nitrogen = -0.11
+    oxygen   = -0.12
 
 change it either via source code, or use a parameter file.
 
@@ -41,7 +41,16 @@ change it either via source code, or use a parameter file.
 You will properly want to use the module as part of a QM/SQM package, but
 if you just want to try it out, use it as.
 
-    ./f3 -x <structure.xyz>
+    ./f3_exe [OPTIONS] <structure.xyz>
+
+options:
+
+    -v,        --version        print version information and exit
+    -h,        --help           print usage information and exit
+    -p <file>, --param <file>   use parameter file <par.dat>
+    -d,        --debug          print debug information
+    -g,        --gradient       calculate and print gradient
+
 
 to calculate the correction energy of the XYZ structure.
 
@@ -49,20 +58,21 @@ to calculate the correction energy of the XYZ structure.
 
 If you want to calculate the gradient of a structure you can call
 
-    ./f3 -g -x <structure.xyz>
+    ./f3_exe -g -x <structure.xyz>
 
 
-## Examples
+## Using a parameter file
 
 Included is a parameter file and structure.xyz
 
-    ./f3 -p examples/parameter.dat -x examples/structure.xyz
+    ./f3_exe -p examples/parameter.dat -x examples/structure.xyz
 
 
 ## Implementation
 
-If you want to implement the module in a QM package, you can. It should be simple.
-Look in the `program.f90` to see how to properly use the module.
+If you want to implement the module in a QM package, you can. It should be
+simple.  Look in the `src/f3.f90` and `src/f3_program.f90` to see how to
+properly use the module.
 
 
 
