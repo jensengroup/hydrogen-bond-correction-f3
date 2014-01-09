@@ -1075,9 +1075,9 @@ subroutine hb_angles(a, b, c, d, h, &
             !MK start
             planar=.false.
             ! check for double bonds
-            if(a.ne.b.and.distance(a,b,geo).lt.bonding(a,b,labels)*3.0d0/4.0d0*0.96)planar=.true. !MKnew5
-            if(a.ne.c.and.distance(a,c,geo).lt.bonding(a,c,labels)*3.0d0/4.0d0*0.96)planar=.true. !MKnew5
-            if(a.ne.d.and.distance(a,d,geo).lt.bonding(a,d,labels)*3.0d0/4.0d0*0.96)planar=.true. !MKnew5
+            if(a.ne.b.and.distance(a,b,geo).lt.bonding(a,b,labels)*3.0d0/4.0d0*0.97)planar=.true. !MKnew5
+            if(a.ne.c.and.distance(a,c,geo).lt.bonding(a,c,labels)*3.0d0/4.0d0*0.97)planar=.true. !MKnew5
+            if(a.ne.d.and.distance(a,d,geo).lt.bonding(a,d,labels)*3.0d0/4.0d0*0.97)planar=.true. !MKnew5
             if(.not.planar)then !NR3t
              phi_shift = PI/(180.0/109.48)
              phi_shift2 = phi_shift
