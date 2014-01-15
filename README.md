@@ -58,14 +58,14 @@ to calculate the correction energy of the XYZ structure.
 
 If you want to calculate the gradient of a structure you can call
 
-    ./f3_exe -g -x <structure.xyz>
+    ./f3_exe -g <structure.xyz>
 
 
 ## Using a parameter file
 
 Included is a parameter file and structure.xyz
 
-    ./f3_exe -p examples/parameter.dat -x examples/structure.xyz
+    ./f3_exe -p examples/parameter.dat examples/structure.xyz
 
 
 ## Implementation
@@ -73,6 +73,4 @@ Included is a parameter file and structure.xyz
 If you want to implement the module in a QM package, you can. It should be
 simple.  Look in the `src/f3.f90` and `src/f3_program.f90` to see how to
 properly use the module.
-
-
 
