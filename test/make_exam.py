@@ -103,7 +103,7 @@ if __name__ == '__main__':
 
 
     # S22 PM6-D3
-    cr = csv.reader(open('energies_s22_pm6-d3.csv', 'rb'))
+    cr = csv.reader(open('energies_s22_pm6-d3_2.csv', 'rb'))
     for row in cr:
         sys_id = row[0]
         sys_name = row[1]
@@ -128,7 +128,7 @@ if __name__ == '__main__':
 
 
     # S66 PM6-D3
-    cr = csv.reader(open('energies_s66_pm6-d3.csv', 'rb'))
+    cr = csv.reader(open('energies_s66_pm6-d3_2.csv', 'rb'))
     for row in cr:
         sys_id = row[0]
         sys_name = row[1]
@@ -168,17 +168,19 @@ if __name__ == '__main__':
     print "S22"
 
     for i in s22_hb:
-         print " {0:26s} {1:10.4f} {2:10.4f} {3:10.4f} ".format(s22[i], s22_lib[i], s22_model[i], s22_model[i]-s22_lib[i])
-         shb_model.append(s22_model[i])
-         shb_lib.append(s22_lib[i])
+        j = i -1
+        print " {0:26s} {1:10.4f} {2:10.4f} {3:10.4f} ".format(s22[j], s22_lib[j], s22_model[j], s22_model[j]-s22_lib[j])
+        shb_model.append(s22_model[j])
+        shb_lib.append(s22_lib[j])
 
     print
     print "S66"
 
     for i in s66_hb:
-         print " {0:26s} {1:10.4f} {2:10.4f} {3:10.4f} ".format(s66[i], s66_lib[i], s66_model[i], s66_model[i]-s66_lib[i])
-         shb_model.append(s66_model[i])
-         shb_lib.append(s66_lib[i])
+        j = i - 1
+        print " {0:26s} {1:10.4f} {2:10.4f} {3:10.4f} ".format(s66[j], s66_lib[j], s66_model[j], s66_model[j]-s66_lib[j])
+        shb_model.append(s66_model[j])
+        shb_lib.append(s66_lib[j])
 
     print
     shb_model = np.array(shb_model)

@@ -162,7 +162,7 @@ if __name__ == '__main__':
 
 
     # S22 PM6-D3
-    cr = csv.reader(open('energies_s22_pm6-d3.csv', 'rb'))
+    cr = csv.reader(open('energies_s22_pm6-d3_2.csv', 'rb'))
     for row in cr:
         sys_id = row[0]
         sys_name = row[1]
@@ -180,7 +180,7 @@ if __name__ == '__main__':
 
 
     # S66 PM6-D3
-    cr = csv.reader(open('energies_s66_pm6-d3.csv', 'rb'))
+    cr = csv.reader(open('energies_s66_pm6-d3_2.csv', 'rb'))
     for row in cr:
         sys_id = row[0]
         sys_name = row[1]
@@ -197,6 +197,7 @@ if __name__ == '__main__':
         s66_pm6.append(sys_energy)
 
 
+    # Select only hydrogen bond dominant energies
     shb = s22[:7] + s66[:23]
     shb_lib = s22_lib[:7] + s66_lib[:23]
     shb_pm6 = s22_pm6[:7] + s66_pm6[:23]
@@ -288,4 +289,5 @@ if __name__ == '__main__':
     plt.savefig('hydrogen_rmsd_scan.png')
     plt.savefig('hydrogen_rmsd_scan.tif')
     plt.savefig('hydrogen_rmsd_scan.eps')
+    plt.savefig('hydrogen_rmsd_scan.pdf')
 
