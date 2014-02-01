@@ -401,10 +401,12 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
     ! To avoid bugs
     if(heteroatoms==0) return
 
-    allocate(hbs(heteroatoms*100, 10))
-    allocate(bondlist(mxatm-1, 3))
-    allocate(nbondsa(heteroatoms*100))
-    allocate(nbondsb(heteroatoms*100))
+    allocate(hbs(heteroatoms*250, 10))
+    allocate(bondlist(mxatm, 3))
+    allocate(nbondsa(heteroatoms*250))
+    allocate(nbondsb(heteroatoms*250))
+
+    print *, 'allo', heteroatoms*250
 
     npairs = 0
     hbs(:,:) = -1
@@ -453,6 +455,7 @@ subroutine hbond_f3(mode, natoms, geo, labels, param, hb_energy, hb_gradient)
         enddo
     enddo
 
+    print *, 'npairs', npairs
 
     ! Specify pairs
     do i=1,npairs
