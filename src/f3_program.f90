@@ -252,9 +252,13 @@ contains
         print '(a)', ''
         print '(a)', 'Cite as:'
         print '(a)', ''
-        print '(a)', '  Martin Korth'
+        print '(a)', '  Korth M.'
         print '(a)', '  J. Chem. Theory Comput., 2010, 6 (12), pp 3808–3816'
         print '(a)', '  DOI: 10.1021/ct100408b'
+        print '(a)', ''
+        print '(a)', '  Kromann J. C., Christensen A. S., Steinmann C., Korth M., Jensen J.H.'
+        print '(a)', '  PeerJ 2:e449 (2014)'
+        print '(a)', '  DOI: 10.7717/peerj.449'
         print '(a)', ''
     end subroutine print_cite
 

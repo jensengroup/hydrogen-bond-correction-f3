@@ -18,6 +18,10 @@ TODO Nitrogen term
     J. Chem. Theory Comput., 2010, 6 (12), pp 3808–3816,
     DOI: 10.1021/ct100408b
 
+    Kromann JC, Christensen AS, Steinmann C, Korth M, Jensen JH.
+    PeerJ 2:e449, 2014
+    DOI: 10.7717/peerj.449
+
 ## Installation
 
 Use the make script. Change compiler if you use something else than `gfortran`.
